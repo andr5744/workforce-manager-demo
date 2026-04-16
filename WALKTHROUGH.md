@@ -8,19 +8,20 @@
 
 1. [What Is This Application?](#1--what-is-this-application)
 2. [What Makes This a Good Migration Demo](#2--what-makes-this-a-good-migration-demo)
-3. [Prerequisites](#3--prerequisites)
-4. [Build and Run the Backend](#4--build-and-run-the-backend)
-5. [Build and Run the React Frontend](#5--build-and-run-the-react-frontend)
-6. [Explore the Application — Feature Guide](#6--explore-the-application--feature-guide)
-7. [Verify the API (curl Quick-Check)](#7--verify-the-api-curl-quick-check)
-8. [Run the Tests](#8--run-the-tests)
-9. [Run the App Modernization Assessment](#9--run-the-app-modernization-assessment)
-10. [Key Migration Points — What Changes and Why](#10--key-migration-points--what-changes-and-why)
-11. [Execute the Migration with Copilot](#11--execute-the-migration-with-copilot)
-12. [Post-Migration Verification Checklist](#12--post-migration-verification-checklist)
-13. [Containerization & Azure Deployment (Optional)](#13--containerization--azure-deployment-optional)
-14. [API Reference](#14--api-reference)
-15. [Troubleshooting](#15--troubleshooting)
+3. [Demo Delivery Options](#3--demo-delivery-options)
+4. [Prerequisites](#4--prerequisites)
+5. [Build and Run the Backend](#5--build-and-run-the-backend)
+6. [Build and Run the React Frontend](#6--build-and-run-the-react-frontend)
+7. [Explore the Application — Feature Guide](#7--explore-the-application--feature-guide)
+8. [Verify the API (curl Quick-Check)](#8--verify-the-api-curl-quick-check)
+9. [Run the Tests](#9--run-the-tests)
+10. [Run the App Modernization Assessment](#10--run-the-app-modernization-assessment)
+11. [Key Migration Points — What Changes and Why](#11--key-migration-points--what-changes-and-why)
+12. [Execute the Migration with Copilot](#12--execute-the-migration-with-copilot)
+13. [Post-Migration Verification Checklist](#13--post-migration-verification-checklist)
+14. [Containerization & Azure Deployment](#14--containerization--azure-deployment)
+15. [API Reference](#15--api-reference)
+16. [Troubleshooting](#16--troubleshooting)
 
 ---
 
@@ -86,9 +87,47 @@ The application is intentionally written with legacy Java 8 patterns and Spring 
 
 ---
 
-## 3 — Prerequisites
+## 3 — Demo Delivery Options
 
-### 3.1 Java 8 JDK (for pre-migration)
+This application supports **two demo use cases** that can be delivered independently or as a combined end-to-end journey. Choose the path that fits your session.
+
+### Option A — Java / Framework Upgrade Only
+
+**Duration:** 30–45 minutes | **Sections:** 4–13
+
+Demonstrate modernizing a legacy Java 8 / Spring Boot 2 application to Java 21 / Spring Boot 3 using GitHub Copilot App Modernization. This is the core migration scenario.
+
+**What attendees see:**
+1. Explore the working legacy app (frontend + backend)
+2. Run the App Modernization Assessment to surface upgrade findings
+3. Execute the migration — watch Copilot handle `javax` → `jakarta`, security refactoring, date types, and more
+4. Verify everything still works post-migration (tests + UI)
+
+**Sections to follow:** 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13 → stop
+
+### Option B — Full Journey: Upgrade + Containerize + Deploy
+
+**Duration:** 60–90 minutes | **Sections:** 4–14
+
+Start with Option A, then continue into containerization and Azure deployment. This shows the complete modernization lifecycle: legacy code → modern code → container → cloud.
+
+**What attendees see (in addition to Option A):**
+5. Generate a Dockerfile using Copilot (based on the app's actual structure)
+6. Build and run the container locally, verify health probes
+7. Generate Kubernetes manifests for AKS deployment
+8. Generate Azure IaC (Bicep/Terraform) and CI/CD pipelines
+
+**Sections to follow:** 4 → 5 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 13 → 14 → stop
+
+### Key Design Principle
+
+> **No pre-baked artifacts.** There are no Dockerfiles, Kubernetes manifests, Bicep templates, or GitHub Actions workflows in this repo. All container and cloud artifacts are **generated live** by Copilot during the demo. The repo includes only the infrastructure that Copilot needs to produce good output: a `docker` Spring profile, Maven wrapper, graceful shutdown, and health probe configuration.
+
+---
+
+## 4 — Prerequisites
+
+### 4.1 Java 8 JDK (for pre-migration)
 
 We start with Java 8 to demonstrate the legacy state. You will switch to Java 21 during the migration.
 
@@ -112,7 +151,7 @@ java -version
 # Expected: openjdk version "1.8.0_xxx"
 ```
 
-### 3.2 Java 21 JDK (for post-migration)
+### 4.2 Java 21 JDK (for post-migration)
 
 Have this ready but do NOT switch to it until the migration step.
 
@@ -123,7 +162,7 @@ sudo apt install -y openjdk-21-jdk
 
 **Windows:** Download from [Adoptium](https://adoptium.net/temurin/releases/?version=21).
 
-### 3.3 Maven 3.6+
+### 4.3 Maven 3.6+
 
 **Install (Ubuntu/WSL):**
 ```bash
@@ -138,7 +177,7 @@ mvn --version
 # Expected: Apache Maven 3.6.x or higher, Java version 1.8
 ```
 
-### 3.4 Node.js 18+ and npm (for the React frontend)
+### 4.4 Node.js 18+ and npm (for the React frontend)
 
 The frontend is a React application using Vite as the build tool. Node.js is required to run the dev server and build the frontend.
 
@@ -159,13 +198,13 @@ node --version   # Expected: v18.x or higher
 npm --version    # Expected: 9.x or higher
 ```
 
-### 3.5 Git
+### 4.5 Git
 
 ```bash
 git --version
 ```
 
-### 3.6 VS Code Extensions
+### 4.6 VS Code Extensions
 
 Install from the VS Code Extensions panel:
 
@@ -176,7 +215,7 @@ Install from the VS Code Extensions panel:
 | **GitHub Copilot App Modernization** | The primary migration tool — runs assessments and generates upgrade plans |
 | **Extension Pack for Java** (Microsoft) | Java language support, debugging, Maven integration |
 
-### 3.7 Pre-loaded Test Data
+### 4.7 Pre-loaded Test Data
 
 The application automatically populates itself on every startup via `DataInitializer.java`. No database setup is needed. The seed data includes:
 
@@ -190,9 +229,9 @@ The application automatically populates itself on every startup via `DataInitial
 
 ---
 
-## 4 — Build and Run the Backend
+## 5 — Build and Run the Backend
 
-### 4.1 Build
+### 5.1 Build
 
 ```bash
 # Navigate to the project
@@ -207,7 +246,7 @@ ls -lh target/workforce-manager-1.0.0-SNAPSHOT.jar
 
 **Expected output:** `BUILD SUCCESS`
 
-### 4.2 Run
+### 5.2 Run
 
 ```bash
 # Option A: via Maven (recommended for development)
@@ -234,11 +273,11 @@ The backend is now running at **http://localhost:8080**.
 
 ---
 
-## 5 — Build and Run the React Frontend
+## 6 — Build and Run the React Frontend
 
 The frontend lives in the `frontend/` subfolder and uses Vite as the dev server. In development, Vite runs on port 3000 and proxies all `/api/*` requests to the Spring Boot backend on port 8080.
 
-### 5.1 Install Dependencies (first time only)
+### 6.1 Install Dependencies (first time only)
 
 ```bash
 cd workforce-manager/frontend
@@ -251,7 +290,7 @@ cd c:\javaappmod\workforce-manager\frontend
 npm install
 ```
 
-### 5.2 Start the Dev Server
+### 6.2 Start the Dev Server
 
 ```bash
 npm run dev
@@ -264,11 +303,11 @@ npm run dev
   ➜  Local:   http://localhost:3000/
 ```
 
-### 5.3 Open in Browser
+### 6.3 Open in Browser
 
 Navigate to **http://localhost:3000** in your browser. You will see the **login screen**.
 
-### 5.4 Production Build (optional)
+### 6.4 Production Build (optional)
 
 To compile the React app into static files that the Spring Boot backend serves directly (no separate Node process):
 
@@ -280,11 +319,11 @@ This outputs the compiled files to `src/main/resources/static/`. After rebuildin
 
 ---
 
-## 6 — Explore the Application — Feature Guide
+## 7 — Explore the Application — Feature Guide
 
 This section walks through every part of the UI. Use it to understand the app before and after migration. After the migration, revisit each section to verify that behavior is identical.
 
-### 6.1 Login Page
+### 7.1 Login Page
 
 The login page presents three role-based sign-in buttons. No typing is needed — click one to log in immediately.
 
@@ -296,7 +335,7 @@ The login page presents three role-based sign-in buttons. No typing is needed �
 
 **What to show the audience:** Click each role and point out how the sidebar navigation changes — employees only see Projects and Time Entries, while admins see everything.
 
-### 6.2 Sidebar Navigation
+### 7.2 Sidebar Navigation
 
 After login, a dark sidebar appears on the left with these sections:
 
@@ -309,7 +348,7 @@ After login, a dark sidebar appears on the left with these sections:
 
 The bottom of the sidebar shows the current user's name, role, and a **Sign Out** button.
 
-### 6.3 Dashboard
+### 7.3 Dashboard
 
 The dashboard provides an at-a-glance overview of the system.
 
@@ -326,7 +365,7 @@ The dashboard provides an at-a-glance overview of the system.
 
 **What to verify after migration:** All numbers should match. The bar charts should render. Clicking "View All" links should navigate correctly.
 
-### 6.4 Employees Page (Admin/Manager only)
+### 7.4 Employees Page (Admin/Manager only)
 
 **List view (`/employees`):**
 - **Search bar** — filters by name or email as you type
@@ -353,7 +392,7 @@ The dashboard provides an at-a-glance overview of the system.
 - Manager links in the detail view are clickable
 - Direct reports appear for Alice Johnson (who manages Bob and Carol)
 
-### 6.5 Departments Page (Admin/Manager only)
+### 7.5 Departments Page (Admin/Manager only)
 
 **List view (`/departments`):**
 - **Search bar** — filters by name or location
@@ -368,7 +407,7 @@ The dashboard provides an at-a-glance overview of the system.
 - All 4 departments display with correct budgets
 - Deleting a department with employees assigned shows an error message (this is expected — the backend prevents it)
 
-### 6.6 Projects Page (All roles)
+### 7.6 Projects Page (All roles)
 
 **List view (`/projects`):**
 - **Search bar** — filters by project name or client name
@@ -391,7 +430,7 @@ The dashboard provides an at-a-glance overview of the system.
 - Recording an expense updates the budget card in real time
 - Changing project status via the buttons works
 
-### 6.7 Time Entries Page (All roles)
+### 7.7 Time Entries Page (All roles)
 
 **List view (`/time-entries`):**
 - **Billable filter pills** — All, Billable, Non-Billable, Internal
@@ -408,7 +447,7 @@ The dashboard provides an at-a-glance overview of the system.
 - New time entry creation succeeds and appears in the list
 - Hours validation (1-24) works in the form
 
-### 6.8 Reports Page (Admin/Manager only)
+### 7.8 Reports Page (Admin/Manager only)
 
 **Summary cards row:**
 - Total Headcount, Total Projects, Overdue Projects, Departments count
@@ -434,7 +473,7 @@ The dashboard provides an at-a-glance overview of the system.
 
 ---
 
-## 7 — Verify the API (curl Quick-Check)
+## 8 — Verify the API (curl Quick-Check)
 
 These curl commands verify the backend independently of the frontend. All API endpoints require HTTP Basic Auth except the health check.
 
@@ -497,34 +536,34 @@ This lets you browse the raw database tables to verify entity data.
 
 ---
 
-## 8 — Run the Tests
+## 9 — Run the Tests
 
 ```bash
 mvn test
 ```
 
-**Expected:** All 8 tests pass. Review the test output to see which services and controllers are covered.
+**Expected:** All 66 tests pass. Review the test output to see which services and controllers are covered.
 
 > **Important:** Run tests both before AND after migration. The test results should be identical. If any test fails after migration, it means a breaking change was introduced.
 
 ---
 
-## 9 — Run the App Modernization Assessment
+## 10 — Run the App Modernization Assessment
 
 > This is where the GitHub Copilot App Modernization extension takes center stage.
 
-### 9.1 Open the Project in VS Code
+### 10.1 Open the Project in VS Code
 
 Open the `workforce-manager` folder in VS Code (not the parent `javaappmod` folder).
 
-### 9.2 Run the Assessment
+### 10.2 Run the Assessment
 
 1. Open the Command Palette (`Ctrl+Shift+P`)
 2. Search for **"App Modernization: Assess"** and run it
 3. Select **Java upgrade** or **Spring Boot upgrade** as the assessment type
 4. Wait for the assessment to complete (usually 30–60 seconds)
 
-### 9.3 Review the Assessment Report
+### 10.3 Review the Assessment Report
 
 The assessment will identify these issues across the codebase:
 
@@ -542,7 +581,7 @@ The assessment will identify these issues across the codebase:
 
 ---
 
-## 10 — Key Migration Points — What Changes and Why
+## 11 — Key Migration Points — What Changes and Why
 
 These are the high-value talking points for the presentation. Show the before/after for each.
 
@@ -653,9 +692,9 @@ Map<String, Long> byStatus = all.stream()
 
 ---
 
-## 11 — Execute the Migration with Copilot
+## 12 — Execute the Migration with Copilot
 
-### 11.1 Switch to Java 21
+### 12.1 Switch to Java 21
 
 Before the migration, switch your JDK:
 
@@ -666,7 +705,7 @@ java -version
 # Expected: openjdk version "21.x.x"
 ```
 
-### 11.2 Run the Migration
+### 12.2 Run the Migration
 
 1. In VS Code, open the **App Modernization** panel
 2. Run **"App Modernization: Migrate"** (Command Palette → search "Migrate")
@@ -674,7 +713,7 @@ java -version
 4. Copilot will generate updated files — **review every diff before accepting**
 5. Accept the changes
 
-### 11.3 Rebuild
+### 12.3 Rebuild
 
 ```bash
 mvn clean package -DskipTests
@@ -682,32 +721,32 @@ mvn clean package -DskipTests
 
 **Expected:** `BUILD SUCCESS` with the new Spring Boot 3.x dependencies.
 
-### 11.4 Run Tests
+### 12.4 Run Tests
 
 ```bash
 mvn test
 ```
 
-**Expected:** All 8 tests pass, same as before.
+**Expected:** All 66 tests pass, same as before.
 
-### 11.5 Restart and Verify
+### 12.5 Restart and Verify
 
 ```bash
 mvn spring-boot:run
 ```
 
-Then verify in the browser at http://localhost:3000 (or http://localhost:8080 if using the production build). Walk through the entire Feature Guide (Section 6) again to confirm everything still works.
+Then verify in the browser at http://localhost:3000 (or http://localhost:8080 if using the production build). Walk through the entire Feature Guide (Section 7) again to confirm everything still works.
 
 ---
 
-## 12 — Post-Migration Verification Checklist
+## 13 — Post-Migration Verification Checklist
 
 Use this checklist to confirm the migration was successful. Walk through each item in the UI.
 
 ### Backend Verification
 
 - [ ] `mvn clean package` completes with `BUILD SUCCESS`
-- [ ] `mvn test` — all 8 tests pass
+- [ ] `mvn test` — all 66 tests pass
 - [ ] `curl http://localhost:8080/actuator/health` returns `{"status":"UP"}`
 - [ ] `curl -u admin:admin123 http://localhost:8080/api/employees` returns 7 employees
 - [ ] `curl -u admin:admin123 http://localhost:8080/api/departments` returns 4 departments
@@ -735,37 +774,161 @@ Use this checklist to confirm the migration was successful. Walk through each it
 
 ---
 
-## 13 — Containerization & Azure Deployment (Optional)
+## 14 — Containerization & Azure Deployment
 
-After the migration, you can optionally demonstrate containerization and cloud deployment. This shows the full modernization journey from legacy code to a cloud-native container.
+After the migration to Java 21 / Spring Boot 3, you can demonstrate the second half of the modernization journey: containerizing the monolith and deploying it to Azure. Everything in this section is **generated live** by GitHub Copilot and the App Modernization extension — there are no pre-baked Dockerfiles, Kubernetes manifests, or IaC templates in the repo.
 
-### 13.1 Generate a Dockerfile with Copilot
+> **Why no pre-created artifacts?** The demo value is watching Copilot generate these files based on the application's actual structure, dependencies, and profile configuration. The `docker` Spring profile (`application-docker.properties`) already supplies the externalized config that Copilot will leverage.
 
-Use GitHub Copilot Chat or the App Modernization extension:
+### 14.1 Pre-Containerization Checklist
+
+Before generating container artifacts, verify these are in place (all were added during Phase 1 prep):
+
+- [ ] `application-docker.properties` exists at `src/main/resources/` — externalizes datasource, port, and actuator settings via env vars
+- [ ] `server.shutdown=graceful` is set in `application.properties` — containers need clean shutdown
+- [ ] `management.endpoint.health.probes.enabled=true` is set in `application-docker.properties` — Kubernetes liveness/readiness probes
+- [ ] Maven wrapper (`mvnw`, `mvnw.cmd`) is in the project root — Dockerfiles use `./mvnw` so no Maven install is needed in the image
+- [ ] All tests pass: `./mvnw test` → 66 tests, 0 failures
+
+### 14.2 Generate a Dockerfile with Copilot
+
+Use GitHub Copilot Chat or the App Modernization extension to generate a production-ready Dockerfile:
 
 ```
-@workspace Generate a multi-stage Dockerfile for this Spring Boot 3 application using Java 21
+@workspace Generate a multi-stage Dockerfile for this Spring Boot 3 application using Java 21. 
+Use ./mvnw for the build stage. Activate the "docker" Spring profile at runtime. 
+Expose port 8080. Use a non-root user for security.
 ```
 
-### 13.2 Build and Run the Container
+**What Copilot should produce:**
+- A **build stage** using a JDK 21 image, copying `mvnw`, `.mvn/`, `pom.xml`, and `src/`, running `./mvnw clean package -DskipTests`
+- A **runtime stage** using a JRE 21 slim image, copying only the JAR, setting `SPRING_PROFILES_ACTIVE=docker`, and exposing port 8080
+- A non-root user for container security best practices
+
+**Review and accept** the generated Dockerfile.
+
+### 14.3 Build and Run the Container Locally
 
 ```bash
+# Build the image
 docker build -t workforce-manager .
-docker run -p 8080:8080 workforce-manager
+
+# Run with H2 (for quick testing — override datasource to keep using H2)
+docker run -p 8080:8080 \
+  -e SPRING_DATASOURCE_URL=jdbc:h2:mem:workforcedb \
+  -e SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.h2.Driver \
+  -e JPA_DDL_AUTO=create-drop \
+  workforce-manager
+
+# Run with PostgreSQL (production-like)
+docker-compose up
 ```
 
-### 13.3 Deploy to Azure (App Service or AKS)
+> **Tip:** If you don't have PostgreSQL available, use the H2 override above. The docker profile is designed to accept any JDBC-compatible database via environment variables.
 
-Use the App Modernization extension to generate:
-- **Terraform or Bicep** templates for Azure App Service or AKS
-- **CI/CD pipeline** definitions for GitHub Actions
-- **Kubernetes manifests** (if targeting AKS)
+### 14.4 Post-Container Verification
 
-> Detailed Azure deployment steps depend on the target service and are covered in the broader workshop materials.
+After the container starts, verify it works:
+
+```bash
+# Health check (Kubernetes probe endpoints)
+curl http://localhost:8080/actuator/health
+# Expected: {"status":"UP"}
+
+curl http://localhost:8080/actuator/health/liveness
+# Expected: {"status":"UP"}
+
+curl http://localhost:8080/actuator/health/readiness
+# Expected: {"status":"UP"}
+
+# API smoke test
+curl -u admin:admin123 http://localhost:8080/api/employees
+# Expected: JSON array of 7 employees
+
+# Metrics endpoint (for monitoring)
+curl http://localhost:8080/actuator/prometheus
+# Expected: Prometheus-format metrics
+```
+
+### 14.5 Generate Kubernetes Manifests with Copilot
+
+For AKS deployment, use Copilot to generate Kubernetes manifests:
+
+```
+@workspace Generate Kubernetes manifests for deploying this Spring Boot application to AKS. 
+Include a Deployment, Service (ClusterIP), Ingress, ConfigMap for environment variables, 
+and a Secret for database credentials. Use the health probe endpoints at /actuator/health/liveness 
+and /actuator/health/readiness.
+```
+
+**What Copilot should produce:**
+- `k8s/deployment.yml` — Pod spec with liveness/readiness probes pointing to `/actuator/health/liveness` and `/actuator/health/readiness`, resource limits, and env vars from ConfigMap/Secret
+- `k8s/service.yml` — ClusterIP service on port 8080
+- `k8s/ingress.yml` — Ingress with TLS (if using NGINX ingress controller)
+- `k8s/configmap.yml` — Non-sensitive config (`SPRING_PROFILES_ACTIVE=docker`, `PORT=8080`)
+- `k8s/secret.yml` — Database credentials (base64 encoded)
+
+### 14.6 Generate Azure Infrastructure-as-Code with Copilot
+
+Depending on the target Azure service, ask Copilot to generate IaC:
+
+**Option A — Azure Kubernetes Service (AKS):**
+```
+@workspace Generate Bicep templates to create an AKS cluster with an Azure Container Registry, 
+a PostgreSQL Flexible Server, and a Virtual Network. Include role assignments for AKS to pull from ACR.
+```
+
+**Option B — Azure App Service:**
+```
+@workspace Generate Bicep templates to deploy this containerized Spring Boot application to 
+Azure App Service. Include an App Service Plan (Linux, B1), a Web App configured for container 
+deployment, and an Azure Database for PostgreSQL Flexible Server.
+```
+
+### 14.7 Generate CI/CD Pipeline with Copilot
+
+```
+@workspace Generate a GitHub Actions workflow that builds this Spring Boot app, runs tests, 
+builds a Docker image, pushes it to Azure Container Registry, and deploys to AKS. 
+Use OIDC for Azure authentication.
+```
+
+**What Copilot should produce:**
+- A `.github/workflows/deploy.yml` with build → test → docker build → ACR push → AKS deploy stages
+- OIDC-based Azure login (no stored secrets)
+- Environment-based deployment gates (optional)
+
+### 14.8 Understanding the Docker Profile
+
+The `application-docker.properties` file (already in the repo) provides cloud-ready configuration:
+
+| Setting | Default | Override Via |
+|---|---|---|
+| `server.port` | 8080 | `PORT` env var |
+| `spring.datasource.url` | PostgreSQL localhost | `SPRING_DATASOURCE_URL` env var |
+| `spring.datasource.username` | `workforce` | `SPRING_DATASOURCE_USERNAME` env var |
+| `spring.datasource.password` | `changeme` | `SPRING_DATASOURCE_PASSWORD` env var |
+| `spring.jpa.hibernate.ddl-auto` | `update` | `JPA_DDL_AUTO` env var |
+| Actuator endpoints | health, info, metrics, prometheus | — |
+| Kubernetes probes | liveness + readiness enabled | — |
+| H2 console | disabled | — |
+
+This profile is activated automatically in the container via `SPRING_PROFILES_ACTIVE=docker`.
+
+### 14.9 Full Containerization Demo Script (5-Minute Version)
+
+For a fast-paced demo:
+
+1. **Generate Dockerfile** (Section 14.2) — ~1 minute
+2. **Build and run** `docker build -t workforce-manager . && docker run -p 8080:8080 workforce-manager` — ~2 minutes
+3. **Verify** health endpoint + API call (Section 14.4) — ~30 seconds
+4. **Show Kubernetes probe config** in `application-docker.properties` — ~30 seconds
+5. **Generate K8s manifests** (Section 14.5) — ~1 minute
+6. Wrap up — explain that Bicep/Terraform and CI/CD would follow the same pattern
 
 ---
 
-## 14 — API Reference
+## 15 — API Reference
 
 ### Employee Endpoints (`/api/employees`) — Admin, Manager
 
@@ -848,7 +1011,7 @@ Use the App Modernization extension to generate:
 
 ---
 
-## 15 — Troubleshooting
+## 16 — Troubleshooting
 
 ### Backend won't start
 
