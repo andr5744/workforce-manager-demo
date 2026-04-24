@@ -50,6 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/actuator/health").permitAll()
                 .antMatchers("/api/departments/**").hasAnyRole("ADMIN", "MANAGER")
+                .antMatchers(org.springframework.http.HttpMethod.GET, "/api/employees/**").authenticated()
                 .antMatchers("/api/employees/**").hasAnyRole("ADMIN", "MANAGER")
                 .antMatchers("/api/projects/**").hasAnyRole("ADMIN", "MANAGER", "EMPLOYEE")
                 .antMatchers("/api/time-entries/**").hasAnyRole("ADMIN", "MANAGER", "EMPLOYEE")

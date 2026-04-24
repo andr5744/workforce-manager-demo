@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { employees, projects } from '../../api/client';
+import { useAuth } from '../../context/AuthContext';
 
 export default function EmployeeDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { hasRole } = useAuth();
   const [emp, setEmp] = useState(null);
   const [directReports, setDirectReports] = useState([]);
   const [empProjects, setEmpProjects] = useState([]);
@@ -42,7 +44,7 @@ export default function EmployeeDetail() {
       <div className="page-header">
         <h1>{emp.firstName} {emp.lastName}</h1>
         <div className="btn-group">
-          <Link to={`/employees/${id}/edit`} className="btn btn-primary">Edit</Link>
+          {hasRole('ADMIN', 'MANAGER') && <Link to={`/employees/${id}/edit`} className="btn btn-primary">Edit</Link>}
           <button className="btn btn-secondary" onClick={() => navigate('/employees')}>Back</button>
         </div>
       </div>
